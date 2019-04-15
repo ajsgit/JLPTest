@@ -38,26 +38,29 @@ public class DiscountProductRetreiver {
 		JsonArray productsArray = categoryObject.getJsonArray(PRODUCTS);
 		List<Product> producsListWithWasPrice = new ArrayList<Product>();
 
-		productsArray.forEach(item -> {
-			JsonObject productObject = (JsonObject) item;
-			JsonObject priceObject = (JsonObject) productObject.get(PRICE);
-			String wasPrice = priceObject.getString(WAS);
-			JsonValue nowPriceValue = priceObject.get(NOW);
-			if(nowPriceValue.getValueType() == ValueType.STRING) {
-				String nowPrice = priceObject.getString(NOW);
-				if (!StringUtils.isEmpty(wasPrice) && !StringUtils.isEmpty(nowPrice)) {
-					Product product = new Product();
-					product.setProductId(productObject.getString(PRODUCT_ID));
-					product.setTitle(productObject.getString(TITLE));
-					product.setColorSwatches(getColorSwatch(productObject));
-					product.setNowPrice(getFormattedPrice(nowPrice));
-					product.setPriceLabel(getPriceLabel(wasPrice, nowPrice, priceObject.getString(THEN1),
-							priceObject.getString(THEN2), labelType));
-					product.setPriceReduction(getPriceReduction(wasPrice, nowPrice));
-					producsListWithWasPrice.add(product);
+		if(productsArray != null) {
+			productsArray.forEach(item -> {
+				JsonObject productObject = (JsonObject) item;
+				JsonObject priceObject = (JsonObject) productObject.get(PRICE);
+				String wasPrice = priceObject.getString(WAS);
+				JsonValue nowPriceValue = priceObject.get(NOW);
+				if(nowPriceValue.getValueType() == ValueType.STRING) {
+					String nowPrice = priceObject.getString(NOW);
+					if (!StringUtils.isEmpty(wasPrice) && !StringUtils.isEmpty(nowPrice)) {
+						Product product = new Product();
+						product.setProductId(productObject.getString(PRODUCT_ID));
+						product.setTitle(productObject.getString(TITLE));
+						product.setColorSwatches(getColorSwatch(productObject));
+						product.setNowPrice(getFormattedPrice(nowPrice));
+						product.setPriceLabel(getPriceLabel(wasPrice, nowPrice, priceObject.getString(THEN1),
+								priceObject.getString(THEN2), labelType));
+						product.setPriceReduction(getPriceReduction(wasPrice, nowPrice));
+						producsListWithWasPrice.add(product);
+					}
 				}
-			}
-		});
+			});			
+		}
+
 		
 		return producsListWithWasPrice;
 	}
